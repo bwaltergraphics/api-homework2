@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Current Weather by IP Address</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+ 
+      }
+    </style>
+  </head>
+  <body>
+
+
+    </div>
+    <div class="degrees">
+        <h2 id="not-supported"></h2>
+        <h2 id="temp"></h2>
+        <h2 id="conditions"></h2>
+        <h2 id="wind-speed"></h2>
+        <h2 id="forcast"></h2>
+
+
+
+
+</div>
+    <script>
+     
+
+          //Need API code from Darksky
+
+          //data api
+          var apiCode = "https://api.darksky.net/forecast/APICODEHERE/";
+
+
+
+          //find current location using ISP address 
+
+          function getLocation(){
+            if (navigator.geolocation){
+              navigator.geolocation.getCurrentPosition(position)
+              var lat = position.coords.latitude;
+              var long = position.coords.longitude;
+
+            }else {
+              document.getElementById("not-supported").innerHTML =  "Not supportedby this browser.";
+            } 
+            window.alert(long);
+          }
+
+          alert("step 1 ok" );
+
+            var latitude = lat.toString();
+            var longitude = long.toString();
+
+          alert("step 2 ok" );
+
+        
+            var proxy = 'https://cors-anywhere.herokuapp.com/';
+            //var api = `${proxy}` + apiCode + `/` + latitude + `,` + longitude;
+            var api = '`' + 'proxy' + apiCode +  lat + ',' + long + '`'; 
+
+          alert("step 3 ok" );
+
+
+            //fetching api address
+            fetch(api) 
+               .then(currentWeather =>{
+                  return currentWeather.json()
+               })
+                .then(currentWeather =>{
+                  console.log(currentWeather)
+
+            // place api address in various HTML elements ising IDs
+               
+                document.getElementById("not-supported").innerHTML = currentWeather.currently.temperature + " F";
+                document.getElementById("temp").innerHTML = currentWeather.currently.temperature + " F";
+                document.getElementById("conditions").innerHTML = currentWeather.currently.summary;
+                document.getElementById("wind-speed").innerHTML = currentWeather.currently.windSpeed;
+                document.getElementById("forcast").innerHTML = currentWeather.daily.summary;
+                })
+             
+   </script>
+
+  </body>
+</html>

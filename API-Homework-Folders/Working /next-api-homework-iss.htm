@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>ISS location</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Cutive+Mono|Kanit:400,600,700,900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+    integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+    crossorigin=""/>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            font-family: 'Kanit', sans-serif;
+        }
+
+        header {
+            width: 100%;
+            background-color: darkblue;
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        header h1 {
+            color:lightgray;
+            font-size: 2.6em;
+        }
+
+        p{
+            font-family: 'Cutive Mono', monospace;
+ 
+        }
+
+
+        #iss-map { 
+            height: 600px; 
+        }
+
+        .wrapper {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 5% 55px;
+            background-color: lightgrey;
+            border-radius: 22px;
+        }
+
+        .wrapper  p{
+            font-size: 1.3em;
+            color:midnightblue;
+        
+        }
+    
+    
+    </style>
+
+
+
+        <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+        integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+        crossorigin="">
+     </script>
+
+
+</head>
+<body>
+
+    <header>
+        <h1>Location of the International Space Station</h1>
+    </header>
+    <div id="iss-map"></div>
+
+    <div class="wrapper">
+        <p id="lat"></p>
+        <p id="long"></p>
+        <p id="speed"></p>
+    </div>
+
+              
+<script>
+
+
+    //making a map
+        var mymap = L.map('iss-map').setView([0, 0], 2);
+        var attribution = '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors';
+        var tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        var tiles = L.tileLayer(tileUrl, {attribution});
+        tiles.addTo(mymap);
+        var firstTime = true;
+
+
+    //using a custom icon for marker
+        var enterprise = L.icon({
+        iconUrl: 'enterprise.png',
+        iconSize:     [100, 50], // size of the icon
+        iconAnchor:   [50, 25], // point of the icon which will correspond to marker's location
+        });
+
+        var marker = L.marker([0, 0], { icon: enterprise }).addTo(mymap);
+
+
+
+    //find location of space station using api
+        var issAPI = "https://api.wheretheiss.at/v1/satellites/25544";
+        async function findISS(){
+            var response = await fetch(issAPI);
+            var data = await response.json();
+            var { latitude, longitude } = data;
+            if (firstTime) {
+                mymap.setView([latitude, longitude], 2 );
+                firstTime = false;
+            }
+
+            //mymap.setView([latitude, longitude], 2 );
+
+
+
+    //setting the position of space station using marker
+            console.log(data); 
+            marker.setLatLng([latitude, longitude] );
+        
+
+
+
+    //displaying the location and speed in numbers
+            document.getElementById("lat").innerHTML = "Latitude: " + data.latitude.toFixed(2);
+            document.getElementById("long").innerHTML = "Longitude: " + data.longitude.toFixed(2);
+            document.getElementById("speed").textContent = "Speed: " + data.velocity.toFixed(2) + " kpm";
+
+
+    // difference between innerHTML and textContent?
+
+    //            var request = new XMLHttpRequest();
+     //       request.open('GET', url);
+     //       request.responseType = 'text';
+
+     //       request.onload = function() {
+     //       poemDisplay.textContent = request.response;
+     //       };
+
+     //       request.send();
+
+     // vs fetch?????
+
+
+
+
+        }
+
+
+        setInterval(findISS, 2000);
+
+</script>
+    
+</body>
+</html>
